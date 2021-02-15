@@ -1,0 +1,35 @@
+header h1 {
+    font-size: xx-large;
+    font-weight: bolder;
+    color: white;
+    /* margin-top: 5px; */
+  }
+  
+  header select {
+    margin-top: 30px;
+    padding: 15px 80px;
+    font-size: medium;
+    font-weight: bolder;
+    color: black;
+    width: 350px;
+    /* text-align: center; */
+    float: left;
+    margin-left: -965px;
+  }
+  
+  h2{
+      margin-top: 25px;
+      font-weight: bolder;
+      font-size: x-large;
+      margin-bottom: 10px;
+      color: white;
+      font-family: 'Times New Roman', Times, serif;
+  }
+
+  p{
+      margin-top: 15px;
+    font-size: x-large;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
