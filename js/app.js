@@ -1,20 +1,23 @@
 'use strict';
 let allKeywords = [] ; 
 let allImagesArray = [] ; 
+let pageNum = 1;
 
-$.ajax('./data/page-1.json')
-.then(data => {
-        data.forEach((item) => {
-            let newImage = new Images(item);   
-            newImage.renderImages();
-            if (!allKeywords.includes(item.keyword)){
-                allKeywords.push(item.keyword) ;
-            }
-        });
-        renderSelect();       
-});
+page(pageNum);
 
-
+function page(){
+    $.ajax(`./data/page-${pageNum}.json`)
+    .then(data => {
+            data.forEach((item) => {
+                let newImage = new Images(item);   
+                newImage.render();
+                if (!allKeywords.includes(item.keyword)){
+                    allKeywords.push(item.keyword) ;
+                }
+            });
+            renderSelect();       
+    });
+}
 
 function Images(imageData) {
     this.title = imageData.title;
@@ -26,15 +29,21 @@ function Images(imageData) {
     allImagesArray.push(this) ;
 }
 
-Images.prototype.renderImages = function () {
+Images.prototype.render = function () {
 
-    let imageClone = $('#photo-template').clone();
-    imageClone.removeAttr('id') ; 
-    imageClone.find('h2').text(this.title);
-    imageClone.find('img').attr('src', this.image_url);
-    imageClone.find('p').text(this.description);
+    // let imageClone = $('#photo-template').clone();
+    // imageClone.removeAttr('id') ; 
+    // imageClone.find('h2').text(this.title);
+    // imageClone.find('img').attr('src', this.image_url);
+    // imageClone.find('p').text(this.description);
 
-    $('main').append(imageClone);
+    // $('main').append(imageClone);
+
+    let template = $('#template-section').html();
+    let newImage = Mustache.render(template, this);
+     $('main').append(newImage);
+
+    return newImage;
 
 } 
 
@@ -46,12 +55,55 @@ function renderSelect() {
 }
 
 $('select').on('change',function(){ 
- $('main').html('<div id="photo-template"> <h2></h2> <img src="" alt=""> <p></p></div>') ;
+ $('main').html('') ;
   let choice =  $('select').val() ; 
   allImagesArray.forEach(object =>{   
     if (object.keyword === choice){ 
         let newObject = new Images(object) ; 
-        newObject.renderImages() ;  
+        newObject.render() ;  
     }
   })
 })
+
+$('#previous').click(showPage(1));
+$('#next').click(showPage(2));
+$('#hornsNum').click(sortingByHorns);
+$('#titleSort').click(sortingByTitle)
+
+function showPage(num){
+  return function(){ 
+      $('select').html('<option>Filter by Keyword</option>')
+      $('main').html('') ;
+      allKeywords = [];
+      allImagesArray = [];
+      pageNum= num; 
+      page(pageNum);
+      console.log(`Hello Page${pageNum}`);
+  }
+}
+
+function sortingByHorns(){
+    allImagesArray.sort( (a,b) =>{
+        // if (a.horns)
+        return a.horns - b.horns;
+        });
+
+    $('main').html('') ;    
+    allImagesArray.forEach((e) => {
+        e.render();
+      });
+}
+
+function sortingByTitle(){
+    allImagesArray.sort((a,b) => {
+        if (a.title.toUpperCase() < b.title.toUpperCase()){
+          return -1;
+        }
+         else if (a.title.toUpperCase() > b.title.toUpperCase()) return 1;
+         else return 0;
+     });
+    $('main').html('') ;    
+    allImagesArray.forEach((e) => {
+        e.render();
+      });
+}
