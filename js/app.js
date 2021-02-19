@@ -11,7 +11,8 @@ $.ajax('./data/page-1.json')
                 allKeywords.push(item.keyword) ;
             }
         });
-        renderSelect();       
+        renderSelect(); 
+        removeTemplate();      
 });
 
 
@@ -28,7 +29,7 @@ function Images(imageData) {
 
 Images.prototype.renderImages = function () {
 
-    let imageClone = $('#photo-template').clone();
+    let imageClone = $('#photo-template').clone().attr('id', this.keyword);;
     imageClone.removeAttr('id') ; 
     imageClone.find('h2').text(this.title);
     imageClone.find('img').attr('src', this.image_url);
@@ -45,13 +46,21 @@ function renderSelect() {
     })      
 }
 
-$('select').on('change',function(){ 
+$('select').on('change',function(){
+
  $('main').html('<div id="photo-template"> <h2></h2> <img src="" alt=""> <p></p></div>') ;
   let choice =  $('select').val() ; 
   allImagesArray.forEach(object =>{   
     if (object.keyword === choice){ 
         let newObject = new Images(object) ; 
         newObject.renderImages() ;  
-    }
-  })
-})
+        allImagesArray.pop();
+            }
+}) 
+removeTemplate();
+
+});
+
+function removeTemplate() {
+    $('#photo-template').remove();
+  }
